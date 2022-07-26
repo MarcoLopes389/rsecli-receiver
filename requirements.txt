@@ -1,0 +1,5 @@
+pyinstaller==5.2
+pymongo==4.2.0
+python-dotenv==0.20.0
+requests==2.27.1
+tabulate==0.8.10
