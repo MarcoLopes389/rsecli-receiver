@@ -1,5 +1,7 @@
 import os
+from dotenv import load_dotenv
 from pymongo import MongoClient
+load_dotenv()
 
 connection = MongoClient(os.environ.get('MONGODB_URI'))
 

