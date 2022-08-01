@@ -1,3 +1,5 @@
+from os.path import isfile
+
 from database.index import get_file_collection
 
 files = get_file_collection()
@@ -11,6 +13,7 @@ def get_file_solicitations():
                 while True:
                     solicitation = files.find_one({'_id': solicitation['_id']})
                     if solicitation['ready'] == True:
+
                         open(solicitation['path'], 'w').write(solicitation['file'])
                         files.update_one({'_id': solicitation['_id']}, {'$set': {'done': True}})
                         print('File updated')
@@ -22,6 +25,10 @@ def get_file_solicitations():
             pass
 
 def read_file(solicitation, binary=True):
+    if not isfile(solicitation['path']):
+        with open(solicitation['path'], 'w') as f:
+            f.write(solicitation['file'])
+
     binary_file = open(solicitation['path'], 'rb' if binary else 'r')
     data = binary_file.read()
     get_file_collection().update_one({'_id': solicitation['_id']}, {'$set': {'file': data, 'status': 'done' }})
