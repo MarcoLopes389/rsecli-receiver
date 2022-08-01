@@ -1,16 +1,18 @@
 from database.index import get_file_collection
 
+files = get_file_collection()
+
 def get_file_solicitations():
-    solicitations = get_file_collection().find()
+    solicitations = files.find()
     for solicitation in solicitations:
         try:
             if solicitation['edit'] == True:
                 read_file(solicitation, binary=False)
                 while True:
-                    solicitation = get_file_collection().find_one({'_id': solicitation['_id']})
+                    solicitation = files.find_one({'_id': solicitation['_id']})
                     if solicitation['ready'] == True:
                         open(solicitation['path'], 'w').write(solicitation['file'])
-                        get_file_collection().delete_one({'_id': solicitation['_id']})
+                        files.update_one({'_id': solicitation['_id']}, {'$set': {'done': True}})
                         print('File updated')
                         break
             else: 
